@@ -8,10 +8,15 @@ public class RepulsionPoint : MonoBehaviour
     Rigidbody body;
     Vector3 originalPosition;
     Vector3 forceDirection;
-    float forceIntensity = 10.0f;
+    public float repulsionForceIntensity = 100.0f;
     float forceAmount;
-    public float reboundForce = 7.5f;
+    public float reboundSpeed = .75f;
     bool applyForce = false;
+    bool countdownRebound = false;
+    public float reboundAfter = 0.25f;
+    float currentTimeAfterExit = 0.0f;
+    bool canRebound = false;
+    public float reboundDetectionRadius = 0.1f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,39 +34,53 @@ public class RepulsionPoint : MonoBehaviour
         originalPosition = transform.position;
     }
 
-    void OnTriggerEnter(Collider other) {
-        if(other.GetComponent<RepellerPoint>()) {
-            // Debug.Log("repeller point enter.");
-            applyForce = true;
+    void Update() {
+        if(countdownRebound) {
+            currentTimeAfterExit += Time.deltaTime;
+            if(currentTimeAfterExit > reboundAfter) {
+                
+                // Only actually begin to rebound if the activator is far enough away.
+                // 8 represents the layer index of the activator.
+                int layerMask = 1 << 8; // Layermask is a bitmask: https://answers.unity.com/questions/1177883/overlapsphere-ignoring-all-colliders-when-i-use-th.html
+                Collider[] colliders = Physics.OverlapSphere(transform.position, repulsionTrigger.radius + reboundDetectionRadius, layerMask);
+                if(colliders.Length == 0) {
+                    canRebound = true;
+                    countdownRebound = false;
+                    currentTimeAfterExit = 0;
+                }
+            }
         }
+    }
+
+    void OnTriggerEnter(Collider other) {
+        applyForce = true;
+
+        // No rebounding once an activator has entered.
+        countdownRebound = false;
+        canRebound = false;
     }
 
     void OnTriggerExit(Collider other) {
-        if(other.GetComponent<RepellerPoint>()) {
-            applyForce = false;
-        }
+        applyForce = false;
+
+        // When we leave the activation trigger, there is a window of time before we can rebound to original position.
+        countdownRebound = true;
     }
 
     void OnTriggerStay(Collider other) {
-        if(other.GetComponent<RepellerPoint>()) {
-            float distanceBetweenColliders = Vector3.Magnitude(transform.position - other.transform.position);
-            forceDirection = (transform.position - other.transform.position) / Vector3.Magnitude(transform.position - other.transform.position);
-            forceAmount = 1/Mathf.Pow(distanceBetweenColliders, 2);
-        }
+        float distanceBetweenColliders = Vector3.Magnitude(transform.position - other.transform.position);
+        forceDirection = (transform.position - other.transform.position) / Vector3.Magnitude(transform.position - other.transform.position);
+        forceAmount = 1/Mathf.Pow(distanceBetweenColliders, 2);
     }
 
     void FixedUpdate() {
         if(applyForce) {
-            body.AddForce(100 * forceAmount * forceDirection * Time.fixedDeltaTime);
-        } else {
+            body.AddForce(repulsionForceIntensity * forceAmount * forceDirection * Time.fixedDeltaTime);
+        } else if(canRebound) {
             // If nothing pushing, rebound back to original position.
             // MoveTowards requires Rigidbody interpolation to be enabled for smooth movement.
-            // ONLY DO THIS IF THE DISTANCE IS LARGER THAN SOME TOLERANCE
-            // Vector3 moveToPosition = Vector3.MoveTowards(body.position, originalPosition, reboundSpeed * Time.fixedDeltaTime);
-            // body.MovePosition(moveToPosition);
-            // Vector3 displacementVector = body.position - originalPosition;
-            Vector3 displacementVector = originalPosition - body.position;
-            body.AddForce(displacementVector * Vector3.Magnitude(displacementVector) * reboundForce * Time.fixedDeltaTime);
+            Vector3 moveToPosition = Vector3.MoveTowards(body.position, originalPosition, reboundSpeed * Time.fixedDeltaTime);
+            body.MovePosition(moveToPosition);
         }
     }
 }
