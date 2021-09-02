@@ -10,7 +10,7 @@ public class RepulsionPoint : MonoBehaviour
     Vector3 forceDirection;
     float forceIntensity = 10.0f;
     float forceAmount;
-    public float reboundSpeed = 5.0f;
+    public float reboundForce = 7.5f;
     bool applyForce = false;
 
     // Start is called before the first frame update
@@ -61,7 +61,7 @@ public class RepulsionPoint : MonoBehaviour
             // body.MovePosition(moveToPosition);
             // Vector3 displacementVector = body.position - originalPosition;
             Vector3 displacementVector = originalPosition - body.position;
-            body.AddForce(displacementVector * Vector3.Magnitude(displacementVector) * reboundSpeed * Time.fixedDeltaTime);
+            body.AddForce(displacementVector * Vector3.Magnitude(displacementVector) * reboundForce * Time.fixedDeltaTime);
         }
     }
 }
