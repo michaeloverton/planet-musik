@@ -2455,11 +2455,14 @@ MonoBehaviour:
   leftInputSource: 4
   rightInputSource: 5
   additionalCharacterHeight: 0.2
-  maxFlyingSpeed: 50
+  maxFlyingSpeed: 10
   flyingAcceleration: 50
-  maxWalkingSpeed: 5
+  maxWalkingSpeed: 3
   gravity: -9.81
   flashlight: {fileID: 7308827872615961646}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!114 &3705947461820898501
 MonoBehaviour:
   m_ObjectHideFlags: 0

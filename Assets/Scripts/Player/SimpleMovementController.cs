@@ -34,6 +34,9 @@ public class SimpleMovementController : MonoBehaviour
     public Light flashlight;
     private bool flashlightToggleCooldown = false;
 
+    // Ground
+    public LayerMask groundLayer;
+
     // Update is called once per frame
     void Update()
     {
@@ -140,7 +143,7 @@ public class SimpleMovementController : MonoBehaviour
     bool isGrounded() {
         Vector3 rayStart = transform.TransformPoint(character.center);
         float rayLength = character.center.y + 0.01f;
-        bool rayHasHit = Physics.SphereCast(rayStart, character.radius - 0.2f, Vector3.down, out RaycastHit hitInfo, rayLength);
+        bool rayHasHit = Physics.SphereCast(rayStart, character.radius - 0.2f, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
         return rayHasHit;
     }
 

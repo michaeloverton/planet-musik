@@ -120,6 +120,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93a6600e37775734e9be544b9a2f2107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  trigLight: {fileID: 1997415313267060834}
+  maxIntensity: 3.5
+  minIntensity: 0
 --- !u!1 &1997415313381532395
 GameObject:
   m_ObjectHideFlags: 0

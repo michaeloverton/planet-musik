@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class TriggerLight : MonoBehaviour
 {
-    Light trigLight;
-    SphereCollider trigger;
+    public Light trigLight;
+    public float maxIntensity = 3.5f;
+    public float minIntensity = 0f;
     bool increaseIntensity = false;
     float originalIntensity;
     float increaseSpeed = 2.0f;
@@ -13,16 +14,6 @@ public class TriggerLight : MonoBehaviour
 
     void Start()
     {
-        trigLight = GetComponent<Light>();
-        if(!trigLight) {
-            throw new System.Exception("couldn't find light component to trigger");
-        }
-
-        trigger = GetComponent<SphereCollider>();
-        if(!trigger) {
-            throw new System.Exception("could not find trigger collider");
-        }
-
         originalIntensity = trigLight.intensity;
     }
 
@@ -40,16 +31,14 @@ public class TriggerLight : MonoBehaviour
 
     void FixedUpdate() {
         if(increaseIntensity) {
-            // Debug.Log("increasing intensity");
-            trigLight.intensity += Mathf.Clamp((1/Mathf.Pow(distance, 1)) * increaseSpeed * Time.fixedDeltaTime, 0, 6);
-            trigLight.range += Mathf.Clamp((1/Mathf.Pow(distance, 1)) * increaseSpeed * Time.fixedDeltaTime, 7, 30);
+            if(trigLight.intensity < maxIntensity) {
+                trigLight.intensity += (1/Mathf.Pow(distance, 1)) * increaseSpeed * Time.fixedDeltaTime;
+            }
         } 
         else {
-            trigLight.intensity -= Mathf.Clamp((1/Mathf.Pow(distance, 1)) * increaseSpeed * Time.fixedDeltaTime, 0, 6);
-            trigLight.range -= Mathf.Clamp((1/Mathf.Pow(distance, 1)) * increaseSpeed * Time.fixedDeltaTime, 7, 30);
+            if(trigLight.intensity > minIntensity) {
+                trigLight.intensity -= increaseSpeed * Time.fixedDeltaTime;
+            }
         }
-
-        trigLight.intensity = Mathf.Clamp(trigLight.intensity, 0, 6);
-        trigLight.range = Mathf.Clamp(trigLight.range, 7, 30);
     }
 }

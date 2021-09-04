@@ -46,7 +46,7 @@ GameObject:
   - component: {fileID: 2221233973270857153}
   - component: {fileID: 2221233973270857152}
   - component: {fileID: 2221233973270857151}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2902,7 +2902,7 @@ MeshCollider:
   m_GameObject: {fileID: 2221233973270857149}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   m_Convex: 1
   m_CookingOptions: 30
@@ -2954,6 +2954,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 084c5f797b4cd404ca3b42df3bce736b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  growthExponent: 1
   minX: 0.75
   minY: 0.75
   minZ: 0.75
@@ -2975,7 +2976,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 6
+  m_Radius: 8
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &2221233974028996506
 Rigidbody:
@@ -2989,9 +2990,9 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 0
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 14
+  m_Constraints: 126
   m_CollisionDetection: 0
 --- !u!114 &4075688196210340436
 MonoBehaviour:
