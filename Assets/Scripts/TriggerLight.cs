@@ -27,24 +27,15 @@ public class TriggerLight : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other) {
-        if(other.GetComponent<RepellerPoint>()) {
-            // Debug.Log("trigger enter");
-            increaseIntensity = true;
-            // trigLight.enabled = true;
-        }
+        increaseIntensity = true;
     }
 
     void OnTriggerExit(Collider other) {
-        if(other.GetComponent<RepellerPoint>()) {
-            increaseIntensity = false;
-            // trigLight.enabled = false;
-        }
+        increaseIntensity = false;
     }
 
     void OnTriggerStay(Collider other) {
-        if(other.GetComponent<RepellerPoint>()) {
-            distance = Vector3.Magnitude(transform.position - other.transform.position);
-        }
+        distance = Vector3.Magnitude(transform.position - other.transform.position);
     }
 
     void FixedUpdate() {
