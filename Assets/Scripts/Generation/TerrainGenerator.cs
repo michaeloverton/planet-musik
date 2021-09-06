@@ -14,6 +14,7 @@ public class TerrainGenerator : MonoBehaviour
     public float maxHeight = 30;
     public float minHeight = -30;
     public float maxHeightVariation = 4f;
+    public LayerMask groundLayer;
 
     // Start is called before the first frame update
     void Start()
@@ -89,12 +90,8 @@ public class TerrainGenerator : MonoBehaviour
         Debug.Log("low: " + low);
 
         ground.gameObject.AddComponent<MeshCollider>();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        ground.gameObject.layer = groundLayer;
     }
 
     /*
