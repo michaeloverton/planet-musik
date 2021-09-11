@@ -2,11 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using UnityEngine.ProBuilder.MeshOperations;
 
 public class TerrainGenerator : MonoBehaviour
 {
-    public Material defaultMaterial;
     public int width = 20;
     public int height = 20;
     public int widthCuts = 5;
@@ -14,13 +12,22 @@ public class TerrainGenerator : MonoBehaviour
     public float maxHeight = 30;
     public float minHeight = -30;
     public float maxHeightVariation = 4f;
+    public Material groundMaterial;
     public LayerMask groundLayer;
+
+    // Water
+    public float waterHeight = 2.0f;
+    public Material waterMaterial;
+
+    // Plants
+    public int plantCount = 2000;
+    public List<GameObject> plants;
 
     // Start is called before the first frame update
     void Start()
     {
         ProBuilderMesh ground = ShapeGenerator.GeneratePlane(PivotLocation.Center, width, height, widthCuts, heightCuts, Axis.Up);
-        ground.SetMaterial(ground.faces, defaultMaterial);
+        ground.SetMaterial(ground.faces, groundMaterial);
 
         // Collection information about vertex to face associations.
         Dictionary<int, Face> vertexIndexToFace = new Dictionary<int, Face>();
@@ -88,10 +95,58 @@ public class TerrainGenerator : MonoBehaviour
         }
         Debug.Log("high: " + high);
         Debug.Log("low: " + low);
-
+ 
         ground.gameObject.AddComponent<MeshCollider>();
 
-        ground.gameObject.layer = groundLayer;
+        // Create water.
+        GameObject waterPlane  = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        waterPlane.transform.position = new Vector3(0,low + waterHeight,0);
+        waterPlane.transform.localScale = new Vector3(200, 1, 200);
+        MeshRenderer waterRend = waterPlane.GetComponent<MeshRenderer>();
+        waterRend.material = waterMaterial;
+
+        Plants();
+    }
+
+    void Plants() {
+        // for(int i=-width; i<width; i=i+5) {
+        //     for(int j=-height; j<height; j=j+5) {
+        //         // Ignore activated layer.
+        //         int layerMask = 1 << 9;
+        //         layerMask = ~layerMask;
+        //         RaycastHit hit;
+        //         Vector3 raycastOrigin = new Vector3(i,50,j);
+        //         if(Physics.Raycast(raycastOrigin, Vector3.down, out hit, 200, layerMask)) {
+        //             // if(Physics.Raycast(raycastOrigin, Vector3.down, out hit, 200)) {
+        //             // Debug.Log("planting at position: " + hit.point);
+        //             // Debug.DrawRay(raycastOrigin, Vector3.down * hit.distance, Color.yellow);
+                    
+        //             GameObject planted = Instantiate(plant, hit.point, Quaternion.identity);
+        //             planted.name = "planted" + i.ToString() + j.ToString();
+        //             Debug.Log(planted.name + " hit: " + hit.collider.gameObject.name);
+        //         }
+        //     }
+        // }
+
+        foreach(GameObject plant in plants) {
+            for(int i=0; i<plantCount; i++) {
+                float x = Random.Range(-width, width);
+                float z = Random.Range(-height, height);
+
+                int layerMask = 1 << 9;
+                layerMask = ~layerMask;
+                RaycastHit hit;
+                Vector3 raycastOrigin = new Vector3(x,50,z);
+                if(Physics.Raycast(raycastOrigin, Vector3.down, out hit, 200, layerMask)) {
+                    GameObject planted = Instantiate(plant, hit.point, Quaternion.identity);
+                    // planted.name = "planted" + i.ToString() + j.ToString();
+                    // Debug.Log(planted.name + " hit: " + hit.collider.gameObject.name);
+                }
+            }
+        }
+        // LightingSettings.
+        UnityEditor.Lightmapping.Bake();
+        // Lightmapping.Bake();
     }
 
     /*
